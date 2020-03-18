@@ -83,9 +83,9 @@ public class DScoreCalculator {
     private void processGene(Integer geneNumber) {
         double[] gene = geneData[geneNumber];
         double tStat = getTStat(gene);
-        double[] permutationTStats = new double[1000];
+        double[] permutationTStats = new double[10000];
 
-        for(int i=0; i<1000; i++) {
+        for(int i=0; i<10000; i++) {
             shuffleArray(gene);
             permutationTStats[i] = getTStat(gene);
         }
@@ -134,7 +134,9 @@ public class DScoreCalculator {
 
         System.out.println("Processing genes");
 
-        ExecutorService threadPool = Executors.newFixedThreadPool(4);
+        long startTime = System.currentTimeMillis();
+
+        ExecutorService threadPool = Executors.newFixedThreadPool(1);
 
         for (Integer geneNumber: geneNumbers)  {
             threadPool.execute(() -> {
@@ -147,6 +149,8 @@ public class DScoreCalculator {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Calculation complete, elapsed time " + (System.currentTimeMillis() - startTime) + " milliseconds");
 
         System.out.println("Writing D-Score results to file");
 
